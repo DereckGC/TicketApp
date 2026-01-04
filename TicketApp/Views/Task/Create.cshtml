@@ -1,0 +1,109 @@
+﻿@model List<UserModel>
+
+@{
+    // Se establece el diseño de la vista utilizando el layout compartido
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Enlace al archivo de estilos CSS para la página de creación de tareas -->
+<link rel="stylesheet" href="~/css/task/styleCreateTask.css">
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-8 col-lg-6">
+
+        <!-- Contenedor del formulario para registrar una nueva tarea -->
+        <div class="form-register p-4 m-5">
+            <h4 class="text-center mb-4">Create New Task</h4>
+
+            <!-- Formulario para crear una nueva tarea dirigida al controlador para la accion de AddTask -->
+            <form id="taskForm" onsubmit="validateForm(event)" asp-controller="Task" asp-action="AddTask">
+
+                <!-- Campo de entrada para el título de la tarea -->
+                <input type="text" class="form-control controls mb-3" id="Title" name="Title" placeholder="Title" required>
+
+                <!-- Campo de texto para la descripción de la tarea -->
+                <textarea class="form-control controls mb-3" id="Description" name="Description" rows="3" placeholder="Description" required></textarea>
+
+                <!-- Campo para seleccionar la fecha de vencimiento -->
+                <label for="ExpirationDate">Expiration Date</label>
+                <input type="date" class="form-control controls mb-3" id="ExpirationDate" name="ExpirationDate" required>
+
+                <!-- Selector de prioridad de la tarea -->
+                <select class="form-control controls mb-3" id="Priority" name="Priority" required>
+                    <option value="" disabled selected>Select Priority</option>
+                    <option value="Low">Low</option>
+                    <option value="Medium">Medium</option>
+                    <option value="High">High</option>
+                </select>
+
+                <!-- Campo de usuario que creó la tarea (solo lectura) -->
+                <label for="CreatedUser">Created User</label>
+                <input type="text" class="form-control controls mb-3 text-dark" id="CreatedUser" name="CreatedUser" value="@ViewData["CurrentUser"]" readonly required>
+
+                <!-- Selector para elegir un colaborador -->
+                <select class="form-control controls mb-3" id="UserCollaborator" name="UserCollaborator" required>
+                    <option value="" disabled selected>Select User Collaborator</option>
+
+                    <!-- Se genera una lista de opciones con los usuarios disponibles teniendo en cuenta que si es un administrador
+                        puede ver a los demas adminsitradores, sino, vera a los usuarios corrientes
+                    -->
+                    @{
+                        foreach (var user in @Model)
+                        {
+                            <option value="@user.Username">@user.Username</option>
+                        }
+                    }
+                </select>
+
+                <!-- Selector del estado de la tarea -->
+                <select class="form-control controls mb-3" id="State" name="State" required>
+                    <option value="" disabled selected>Select State</option>
+                    <option value="Pending">Pending</option>
+                    <option value="In Progress">In Progress</option>
+                </select>
+
+                <!-- Botón para enviar el formulario -->
+                <button type="submit" class="btn btn-primary w-100 botons">Create Task</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Pantalla de éxito -->
+<div class="success-screen p-4 text-center" id="successScreen">
+    <h1 class="text-success"><i class="bi bi-check-circle-fill"></i> Success!</h1>
+    <p>Your task has been created successfully.</p>
+    <button class="btn btn-primary w-100 botons" onclick="resetForm()">Close</button>
+</div>
+
+<!-- Pantalla de error -->
+<div class="success-screen p-4 text-center" id="errorScreen">
+    <h1 class="text-warning"><i class="bi bi-x-circle-fill"></i> Error! @ViewData["Message"]</h1>
+    <button class="btn btn-primary w-100 botons" onclick="resetForm()">Close</button>
+</div>
+
+@{
+    // Se verifica si el controlador envio un mensaje
+    // Teniendo en cuenta que el mensaje sera recibido una vez se realice una accion
+    var messageController = ViewData["Message"];
+    if (messageController != null && messageController.ToString() == "Added Tasks")
+    {
+        // Por lo que si la acccion fue exitosa se muestra una pantalla de exito
+        <script>
+            // Oculta el formulario y muestra la pantalla de éxito si la tarea se ha agregado correctamente
+            document.querySelector('.form-register').style.display = 'none';
+            document.getElementById('errorScreen').style.display = 'none';
+            document.getElementById('successScreen').style.display = 'block';
+        </script>
+    }
+    else if (messageController != null && messageController.ToString().Contains("Could not add task"))
+    {
+        // Sino mostrara una pantalla de error
+        <script>
+            // Oculta el formulario y muestra la pantalla de error si la tarea no pudo agregarse
+            document.querySelector('.form-register').style.display = 'none';
+            document.getElementById('successScreen').style.display = 'none';
+            document.getElementById('errorScreen').style.display = 'block';
+        </script>
+    }
+}

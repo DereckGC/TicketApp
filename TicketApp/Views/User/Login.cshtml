@@ -1,0 +1,42 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutMinimal.cshtml";
+}
+
+
+
+<div class="box">
+    <div class="container">
+        <div class="top-header">
+            <span>Have an account?</span>
+            <header>Login</header>
+        </div>
+
+        <form asp-action="Login" method="post" asp-controller="User">
+            <div class="input-field">
+                <input type="text" class="input" placeholder="Username" name="username" required>
+                <i class="bx bx-user"></i>
+            </div>
+            <div class="input-field">
+                <input type="password" class="input" placeholder="Password" name="password" required>
+                <i class="bx bx-lock-alt"></i>
+            </div>
+            
+            <div class="input-field">
+                <input type="submit" class="submit" value="Login">
+            </div>
+        </form>
+        <!-- Mensaje de error -->
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger" role="alert">
+                @foreach (var modelState in ViewData.ModelState.Values)
+                {
+                    foreach (var error in modelState.Errors)
+                    {
+                        <p>@error.ErrorMessage</p>
+                    }
+                }
+            </div>
+        }
+    </div>
+</div>

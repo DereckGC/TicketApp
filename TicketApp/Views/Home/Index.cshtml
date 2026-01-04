@@ -1,0 +1,77 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+@model TicketApp.Models.UserModel
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12 text-center">
+            <p class="h3 text-primary fw-bold">Welcome to the Dashboard, @ViewData["Username"]</p>
+        </div>
+    </div>
+
+    <div class="row mt-4 d-flex justify-content-center gap-4">
+        <!--  Profile -->
+        <div class="card shadow-lg p-3 text-center" style="width: 18rem;">
+            <img src="~/images/user/user-profile.png" class="card-img-top rounded-circle" style="width: 120px; height: 120px; object-fit: cover; margin: auto;" alt="Profile">
+            <div class="card-body">
+                <h5 class="card-title fw-bold">Update Profile</h5>
+                <p class="card-text text-muted">Edit your email, password, and username.</p>
+                <button type="button" class="btn btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#userSettingsModal">
+                    Update Profile
+                </button>
+            </div>
+        </div>
+        
+        <!-- Logout  -->
+        <div class="card shadow-lg p-3 text-center" style="width: 18rem;">
+            <img src="~/images/user/logout.png" class="card-img-top rounded-circle" style="width: 120px; height: 120px; object-fit: cover; margin: auto;" alt="Logout">
+            <div class="card-body">
+                <h5 class="card-title fw-bold">Log Out</h5>
+                <p class="card-text text-muted">Sign out of your account securely.</p>
+                <a asp-controller="Home" asp-action="Logout" class="btn btn-outline-danger w-100">Log Out</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Settings Modal -->
+<div class="modal fade" id="userSettingsModal" tabindex="-1" aria-labelledby="userSettingsModalLabel" aria-hidden="true">
+    <div id="alertContainer" class="alert d-none" role="alert"></div>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold text-primary" id="userSettingsModalLabel">Update Profile</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="userSettingsForm">
+                    <div class="mb-3">
+                        <label for="userName" class="form-label fw-bold">Username</label>
+                        <input type="text" class="form-control" id="userName" name="Name" value="@Model.Username">
+                    </div>
+                    <div class="mb-3">
+                        <label for="userEmail" class="form-label fw-bold">Email</label>
+                        <input type="email" class="form-control" id="userEmail" name="Email" value="@Model.Email">
+                    </div>
+                    <div class="mb-3">
+                        <label for="userPassword" class="form-label fw-bold">New Password</label>
+                        <input type="password" class="form-control" id="userPassword" name="Password" placeholder="leave black for no changes">
+                    </div>
+                    <div class="mb-3">
+                        <label for="userConfirmPassword" class="form-label fw-bold">Current Password</label>
+                        <input type="password" class="form-control" id="userConfirmPassword" name="ConfirmPassword">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="saveUserSetting()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

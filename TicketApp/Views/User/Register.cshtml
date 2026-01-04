@@ -1,0 +1,55 @@
+﻿@model TicketApp.Models.UserModel
+
+@{
+    Layout = "~/Views/Shared/_LayoutRegister.cshtml";
+}
+@Model
+<div class="wrapper">
+    <!-- Boton para regresar al dashboard -->
+    <a href="javascript:history.back()" class="btn btn-info rounded-pill">
+        <i class="fas fa-arrow-left"></i> Go Back
+    </a>
+
+    <h2>Registration</h2>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    @if (TempData["ConfirmMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["ConfirmMessage"]
+        </div>
+    }
+    <!-- Boton para regresar al dashboard -->
+    <form asp-action="Register" method="post" asp-controller="User" onsubmit="return validatePassword()">
+        <div class="input-box">
+            <input type="text" asp-for="Username" placeholder="Enter your name" required>
+            <span asp-validation-for="Username"></span>
+        </div>
+
+        <div class="input-box">
+            <input type="email" asp-for="Email" placeholder="Enter your email" required>
+            <span asp-validation-for="Email"></span>
+        </div>
+
+        <div class="input-box">
+            <input type="password" asp-for="Password" placeholder="Create password" id="password" required>
+            <span asp-validation-for="Password"></span>
+        </div>
+
+        <div class="input-box">
+            <input type="password" placeholder="Confirm password" id="confirmPassword" required>
+            
+        </div>
+
+        <div class="input-box button">
+            <input type="Submit" value="Register">
+        </div>
+        <span id="alerPassword"></span>
+    </form>
+</div>

@@ -1,0 +1,84 @@
+﻿@model IEnumerable<TaskModel>
+
+<!-- Enlace a la hoja de estilos específica para la vista de tareas -->
+<link rel="stylesheet" href="~/css/task/styleIndex.css">
+
+<div class="container-fluid">
+    <div class="row">
+
+        <div class="col-12">
+            <!-- Título de la página con ícono -->
+            <h3 class="text-center m-4 p-3 fw-bold">
+                <i class="bi bi-sliders me-2"></i>Click the task you want to edit
+            </h3>
+        </div>
+
+        <!-- Contenedor principal para la lista de tareas -->
+        <div class="@(ViewData["Message"]?.ToString() == "ManageTask" ? "col-md-9 col-lg-10" : "col-md-12")">
+            <div class="container mt-5">
+
+                <!-- Selector para ordenar las tareas según diferentes criterios -->
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="sorting-container p-3 bg-light rounded shadow-sm">
+                            <label for="sortSelect" class="form-label fw-bold text-primary">Sort by:</label>
+                            <select class="form-select form-select-lg" onchange="changeOrder()" id="sortSelect">
+                                <option value="title">Title</option>
+                                <option value="priority">Priority</option>
+                                <option value="state">State</option>
+                                <option value="expirationDate">Expiration Date</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección que contiene la lista de tareas -->
+                <div class="row" id="cardRow">
+                    @foreach (var task in Model)
+                    {
+                        <div class="col-md-3 mb-4 task-card"
+                             data-title="@task.Title"
+                             data-priority="@task.Priority"
+                             data-state="@task.State"
+                             data-expirationDate="@task.ExpirationDate.ToString("yyyy-MM-dd")">
+
+                            <!-- Cada tarea se representa como una tarjeta interactiva -->
+                            <div class="card h-100 shadow-sm"
+                                 onclick="location.href='@Url.Action("Edit", "Task", new { TaskID = task.TaskID })'"
+                                 style="cursor: pointer;">
+
+                                <!-- Cuerpo de la tarjeta con la información de la tarea -->
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="bi bi-card-checklist me-2"></i>@task.Title
+                                    </h5>
+                                    <h6 class="card-subtitle mb-2 text-muted">
+                                        <i class="bi bi-calendar-event me-2"></i>@task.ExpirationDate.ToShortDateString()
+                                    </h6>
+                                    <p class="card-text">
+                                        <i class="bi bi-card-text me-2"></i>@task.Description
+                                    </p>
+                                    <p class="card-text">
+                                        <i class="bi bi-exclamation-circle me-2"></i><strong>Priority:</strong> @task.Priority
+                                    </p>
+                                    <p class="card-text">
+                                        <i class="bi bi-person me-2"></i><strong>Created by:</strong> @task.CreatedUser
+                                    </p>
+                                    <p class="card-text">
+                                        <i class="bi bi-people me-2"></i><strong>Collaborator:</strong> @task.UserCollaborator
+                                    </p>
+                                    <p class="card-text">
+                                        <i class="bi bi-info-circle me-2"></i><strong>State:</strong> @task.State
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Archivo JavaScript que maneja interacciones en la vista -->
+<script src="~/js/IndexTask.js"></script>

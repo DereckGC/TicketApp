@@ -1,0 +1,8 @@
+﻿@model List<TaskModel>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!--Dentro del index se llama a la vista encargada de cargar las tareas-->
+@Html.Partial("/Views/Shared/_ManageTask.cshtml", Model)
+

@@ -1,0 +1,211 @@
+﻿@model TaskModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml"; // Define el layout principal de la vista.
+}
+
+<!-- Enlace a la hoja de estilos específica para la edición de tareas -->
+<link rel="stylesheet" href="~/css/task/styleEdit.css">
+
+<!-- Contenedor principal de la página -->
+<div class="container-fluid my-5">
+    <!-- Mensaje de éxito o error -->
+    @if (ViewData["Message"] != null)
+    {
+        <!-- Overlay para mostrar mensajes (éxito o error) -->
+        <div class="overlay" id="screen">
+            <div class="overlay-content @(ViewData["Message"].ToString().Contains("Success") ? "success" : "error")">
+                <!-- Botón para cerrar el mensaje -->
+                <button class="close-btn" onclick="hideMessageScreen()">✖</button>
+                <!-- Ícono dinámico dependiendo del tipo de mensaje -->
+                <i class="bi @(ViewData["Message"].ToString().Contains("Success") ? "bi-check-circle-fill" : "bi-x-circle-fill")"></i>
+                <!-- Mensaje a mostrar -->
+                <h3>@ViewData["Message"]</h3>
+            </div>
+        </div>
+    }
+
+    <!-- Overlay de confirmación para eliminar una tarea -->
+    <div class="overlay d-none" id="confirmDelete">
+        <div id="card-Delete">
+            <div id="card-content-Delete">
+                <!-- Ícono de eliminación -->
+                <div id="icon-Delete">
+                    <svg fill="currentColor"
+                         viewBox="0 0 20 20"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <path clip-rule="evenodd"
+                              d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                              fill-rule="evenodd"></path>
+                    </svg>
+                </div>
+                <!-- Título de confirmación -->
+                <h2 id="title-Delete">Are you sure?</h2>
+                <!-- Descripción de la acción -->
+                <p id="description-Delete">
+                    Do you really want to continue? This process cannot be undone.
+                </p>
+                <!-- Botones de acción -->
+                <div id="buttons-Delete">
+                    <!-- Botón para cancelar la eliminación -->
+                    <button id="cancel-button-Delete" class="cancel-button" onclick="closeConfirmDelete()">Cancel</button>
+                    <!-- Botón para confirmar la eliminación -->
+                    <a id="confirm-button-Delete" class="btn btn-danger btn-sm border-5 confirm-button" asp-controller="Task" asp-action="DeleteTask" asp-route-taskID="@Model.TaskID">Confirm</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay de carga (spinner) -->
+    <div class="overlay d-none" id="spinner">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+    <!-- Contenido principal de la página -->
+    <div class="container">
+        <div class="row justify-content-center row-cols-1 row-cols-md-2 row-cols-lg-4 g-3">
+            <!-- Sección de la tarea por defecto -->
+            <div class="col" id="taskContent" data-tasks='@Html.Raw(Json.Serialize(Model))'>
+                <h3 class="text-center mb-4 text-light fw-bold">
+                    <i class="bi bi-list-task me-2"></i>Default
+                </h3>
+
+                <div class="drag-drop-section box mb-3" ondrop="drop(event)" ondragover="allowDrop(event)">
+
+                    <div class="card task-item" id="cardDragd" draggable="true" ondragstart="drag(event)">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="bi bi-card-checklist me-2"></i>@Model.Title
+                            </h5>
+                            <h6 class="card-subtitle mb-2 text-muted">
+                                <i class="bi bi-calendar-event me-2"></i>@Model.ExpirationDate.ToShortDateString()
+                            </h6>
+                            <p class="card-text">
+                                <i class="bi bi-card-text me-2"></i>@Model.Description
+                            </p>
+                            <p class="card-text">
+                                <i class="bi bi-exclamation-circle me-2"></i><strong>Priority:</strong> @Model.Priority
+                            </p>
+                            <p class="card-text">
+                                <i class="bi bi-person me-2"></i><strong>Created by:</strong> @Model.CreatedUser
+                            </p>
+                            <p class="card-text">
+                                <i class="bi bi-people me-2"></i><strong>Collaborator:</strong> @Model.UserCollaborator
+                            </p>
+                            <p class="card-text" id="taskState">
+                                <i class="bi bi-info-circle me-2"></i><strong>State:</strong> @Model.State
+                            </p>
+
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-primary btn-sm" onclick="openEditModal(@Model.TaskID)">Edit</button>
+                                <button class="btn btn-danger btn-sm" onclick="displayConfirmDelete()">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 class="text-center mt-4 text-secondary fw-bold">
+                    <i class="bi bi-arrow-right-circle me-2"></i>Drag to the state you want to update the task to
+                </h4>
+            </div>
+
+            <!-- Sección de estados -->
+            <div class="col d-flex flex-column align-items-center">
+                <h3 class="text-center mb-4 text-light fw-bold">
+                    <i class="bi bi-person-workspace"></i> In Progress
+                </h3>
+                <div class="drag-drop-section box w-100" id="progress" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+            </div>
+
+            <div class="col d-flex flex-column align-items-center">
+                <h3 class="text-center mb-4 text-light fw-bold">
+                    <i class="bi bi-clock-history"></i> Pending
+                </h3>
+                <div class="drag-drop-section box w-100" id="pending" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+            </div>
+
+            <div class="col d-flex flex-column align-items-center">
+                <h3 class="text-center mb-4 text-light fw-bold">
+                    <i class="bi bi-clipboard2-check-fill"></i> Finished
+                </h3>
+                <div class="drag-drop-section box w-100" id="finished" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Modal de edición de tareas -->
+<div class="modal fade" id="editTaskModal" tabindex="-1" aria-labelledby="editTaskModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Encabezado del modal -->
+            <div class="modal-header">
+                <h5 class="modal-title" id="editTaskModalLabel">Editar Tarea</h5>
+                <!-- Botón para cerrar el modal -->
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <!-- Cuerpo del modal -->
+            <div class="modal-body">
+                <!-- Formulario para editar la tarea -->
+                <form id="editTaskForm" asp-controller="Task" asp-action="Editask">
+                    <!-- Campo oculto para el ID de la tarea -->
+                    <input type="hidden" id="editTaskID" name="TaskID" value="@Model.TaskID">
+
+                    <!-- Campo para el título de la tarea -->
+                    <div class="mb-3">
+                        <label for="editTitle" class="form-label">Title</label>
+                        <input type="text" class="form-control" id="editTitle" name="Title" value="@Model.Title" required>
+                    </div>
+                    <!-- Campo para la descripción de la tarea -->
+                    <div class="mb-3">
+                        <label for="editDescription" class="form-label">Description</label>
+                        <textarea class="form-control" id="editDescription" name="Description" required>@Model.Description</textarea>
+                    </div>
+                    <!-- Campo para la fecha de vencimiento -->
+                    <div class="mb-3">
+                        <label for="editExpirationDate" class="form-label">Expiration date</label>
+                        <input class="form-control" type="date" name="ExpirationDate" value="@Model.ExpirationDate.ToString("yyyy-MM-dd")" />
+                    </div>
+                    <!-- Campo para la prioridad de la tarea -->
+                    <div class="mb-3">
+                        <label for="editPriority" class="form-label">Priority</label>
+                        <select class="form-control" id="editPriority" name="Priority">
+                            @foreach (var priority in new List<string> { "High", "Medium", "Low" })
+                            {
+                                <option value="@priority" selected="@(Model.Priority == priority ? "selected" : null)">@priority</option>
+                            }
+                        </select>
+                    </div>
+                    <!-- Campo para el usuario creador (solo lectura) -->
+                    <div class="mb-3">
+                        <label for="createdUser" class="form-label">Created User</label>
+                        <input class="form-control text-dark" id="createdUser" name="CreatedUser" value="@Model.CreatedUser" readonly />
+                    </div>
+                    <!-- Campo para el colaborador (solo lectura) -->
+                    <div class="mb-3">
+                        <label for="userColaborator" class="form-label">User Collaborator</label>
+                        <input class="form-control text-dark" id="userColaborator" name="UserCollaborator" value="@Model.UserCollaborator" readonly />
+                    </div>
+
+                    <!-- Campo oculto para el estado de la tarea -->
+                    <input type="hidden" id="editState" name="State" value="@Model.State">
+
+                    <!-- Botón para guardar los cambios -->
+                    <button type="submit" class="btn btn-success border-3">Save changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Script para eliminar la tarjeta de tarea si el ID es -1 -->
+@if (Model.TaskID == -1)
+{
+    <script>
+        // Seleccionamos el contenedor de la tarea y lo eliminamos
+        document.getElementById("cardDragd").remove();
+    </script>
+}

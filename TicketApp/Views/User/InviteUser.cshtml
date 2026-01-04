@@ -1,0 +1,53 @@
+﻿<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg border-0" style="background: rgba(255, 255, 255, 0.8); border-radius: 15px;">
+                <div class="card-body p-4">
+                    <h4 class="card-title text-center mb-3 text-dark">Invite a User</h4>
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle"></i> @TempData["SuccessMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+
+                    <!-- Mensaje de error -->
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-triangle"></i> @TempData["ErrorMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+                    <form asp-action="InviteUser" asp-controller="User" method="post" onsubmit="showSpinner()">
+                        <div class="form-floating mb-3">
+                            <input type="email" class="form-control" id="floatingInput" name="Email" placeholder="name@example.com" required>
+                            <label for="floatingInput">Enter an email</label>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="javascript:history.back()" class="btn btn-outline-dark">
+                                <i class="fas fa-arrow-left"></i> Go Back
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <span id="buttonText"><i class="fas fa-paper-plane"></i> Send Invite</span>
+                                <span id="spinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                            </button>
+                            
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function showSpinner() {
+        
+        document.getElementById("buttonText").classList.add("d-none");
+        document.getElementById("spinner").classList.remove("d-none");
+        document.getElementById("submitButton").disabled = true;
+    }
+</script>

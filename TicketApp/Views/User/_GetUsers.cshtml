@@ -1,0 +1,28 @@
+
+@model IEnumerable<TicketApp.Models.UserModel>
+
+
+
+<div class="table-responsive">
+    <table class="table table-bordered table-hover table-sm table-striped table-secondary">
+        <thead class="thead-dark">
+
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Name</th>
+                <th scope="col">Email</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                <tr>
+                    <th scope="row">@user.Id</th>
+                    <td>@user.Username</td>
+                    <td>@user.Email</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+

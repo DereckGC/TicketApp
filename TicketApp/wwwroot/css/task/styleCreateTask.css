@@ -1,0 +1,103 @@
+﻿* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-image: url('../../images/task/back-ground-create.jpg'); 
+    background-size: cover;
+    background-position: center;
+    font-family: 'calibri', sans-serif;
+}
+
+.form-register {
+    background: #24303c;
+    border-radius: 4px;
+    color: white;
+    box-shadow: 7px 13px 37px #000;
+}
+
+.controls {
+    background: #24303c;
+    border: 1px solid #1f53c5;
+    color: white;
+}
+
+.controls:focus {
+    outline: none;
+    border-color: #3a7dfd;
+}
+
+.botons {
+    background: #1f53c5;
+    border: none;
+    transition: background 0.3s ease;
+}
+
+.botons:hover {
+    background: #3a7dfd;
+}
+
+.success-screen, .error-screen {
+    background: #24303c;
+    border-radius: 4px;
+    color: white;
+    box-shadow: 7px 13px 37px #000;
+    display: none; 
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 400px;
+    padding: 20px;
+    text-align: center;
+    z-index: 1000; 
+}
+
+.success-screen h1, .error-screen h1 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.success-screen p, .error-screen p {
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.success-screen .btn, .error-screen .btn {
+    background: #007bff;
+    border: none;
+    padding: 10px;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    width: 100%;
+}
+
+.success-screen .btn:hover, .error-screen .btn:hover {
+    background: #0056b3;
+}
+
+.error-screen {
+    background: #3c2432;
+}
+
+select#UserCollaborator {
+    max-height: 150px; 
+    overflow-y: auto; 
+    height: auto; 
+    width: 100%; 
+}
+
+select {
+    font-size: 14px; 
+}
+
+option {
+    padding: 8px; 
+}
+
+
+
